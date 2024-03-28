@@ -130,6 +130,8 @@ export default function App() {
   const [nameFilter, setNameFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [isPriorityFocus, setIsPriorityFocus] = useState(false);
+  const [sortBy, setSortBy] = useState("Priority");
+  const [isSortByFocus, setIsSortByFocus] = useState(false);
 
   useEffect(() => {
     const filteredList = defaultList.map((status) => {
@@ -145,10 +147,37 @@ export default function App() {
     setTasksToDisplay(filteredList);
   }, [nameFilter, priorityFilter]);
 
+  useEffect(() => {
+    const sortedList = defaultList.map((status) => {
+      let sortedTasks = [...status.tasks];
+      if (sortBy === "Priority") {
+        sortedTasks.sort((a, b) => {
+          const priorityOrder = { P0: 0, P1: 1, P2: 2 };
+          return priorityOrder[a.priority] - priorityOrder[b.priority];
+        });
+      } else if (sortBy === "Start Date") {
+        sortedTasks.sort((a, b) => a.created - b.created);
+      } else if (sortBy === "End Date") {
+        sortedTasks =
+          status.title === "Completed"
+            ? [...status.tasks].sort((a, b) => b.endDate - a.endDate)
+            : [...status.tasks];
+      }
+      return { ...status, tasks: sortedTasks };
+    });
+    setTasksToDisplay(sortedList);
+  }, [sortBy]);
+
   const prioritiesData = [
     { value: "1", label: "P0" },
     { value: "2", label: "P1" },
     { value: "3", label: "P2" },
+  ];
+
+  const sortByData = [
+    { value: "1", label: "Priority" },
+    { value: "2", label: "Start Date" },
+    { value: "3", label: "End Date" },
   ];
 
   const handleDialogOps = (value, task, title) => {
@@ -181,7 +210,9 @@ export default function App() {
       setTasksToDisplay(defaultList);
       setShowDialog(false);
     }
-    Alert.alert(`New task ${taskToCreate.taskName} is created successfully`);
+    Alert.alert(
+      `New task ${taskToCreate.taskName} has been created successfully`
+    );
   };
 
   const editTask = (taskToEdit, newPriority, newStatus) => {
@@ -212,7 +243,7 @@ export default function App() {
     if (newStatusIndex !== -1) {
       tasksToDisplay[newStatusIndex].tasks.push(editedTask);
     }
-    Alert.alert(`${taskToEdit.taskName} deleted successfully`);
+    Alert.alert(`${taskToEdit.taskName} has been edited successfully`);
     setShowDialog(false);
   };
 
@@ -224,7 +255,7 @@ export default function App() {
         );
       }
     });
-    Alert.alert(`${taskToDelete.taskName} deleted successfully`);
+    Alert.alert(`${taskToDelete.taskName} has been deleted successfully`);
     setShowDialog(false);
   };
 
@@ -234,7 +265,7 @@ export default function App() {
         <Text style={styles.mainTitle}>Task Board</Text>
         <Image
           source={{
-            uri: "https://cdn-icons-png.flaticon.com/512/666/666201.png",
+            uri: "https://cdn-icons-png.flaticon.com/512/9131/9131529.png",
           }}
           alt="userLogo"
           style={styles.userIcon}
@@ -272,6 +303,24 @@ export default function App() {
             }}
           />
         </View>
+        <Text style={styles.filterByText}>Sort By: </Text>
+        <Dropdown
+          style={[styles.dropdown, isSortByFocus && { borderColor: "blue" }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          data={sortByData}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={sortBy ? sortBy : "Priority"}
+          value={sortBy}
+          onFocus={() => setIsSortByFocus(true)}
+          onBlur={() => setIsSortByFocus(false)}
+          onChange={(item) => {
+            setSortBy(item.label);
+            setIsSortByFocus(false);
+          }}
+        />
         <TouchableOpacity
           onPress={() => {
             setNameFilter("");
@@ -351,7 +400,7 @@ const styles = StyleSheet.create({
     paddingRight: "1.5vw",
   },
   filterByText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "600",
     marginBottom: 10,
   },
@@ -361,6 +410,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    marginBottom: 13,
   },
   inputBox: {
     backgroundColor: "white",
