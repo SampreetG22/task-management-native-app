@@ -10,7 +10,7 @@ export default function KeyBoardView({ children }) {
     >
       <ScrollView
         style={{ flex: 1 }}
-        bounces={false}
+        alwaysBounceVertical
         showsVerticalScrollIndicator
       >
         {children}

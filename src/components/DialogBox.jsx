@@ -156,22 +156,26 @@ const DialogBox = ({
           <View style={styles.dialogContent}>
             <Text style={styles.label}>Title:</Text>
             <TextInput
-              style={styles.dialogInputs}
+              style={[styles.dialogInputs, styles.readOnly]}
               value={task.taskName}
               readOnly
             />
             <Text style={styles.label}>Description:</Text>
             <TextInput
-              style={[styles.dialogInputs, { height: 100 }]}
+              style={[[styles.dialogInputs, styles.readOnly], { height: 100 }]}
               value={task.description}
               readOnly
               multiline
             />
             <Text style={styles.label}>Team:</Text>
-            <TextInput style={styles.dialogInputs} value={task.team} readOnly />
+            <TextInput
+              style={[styles.dialogInputs, styles.readOnly]}
+              value={task.team}
+              readOnly
+            />
             <Text style={styles.label}>Assignee:</Text>
             <TextInput
-              style={styles.dialogInputs}
+              style={[styles.dialogInputs, styles.readOnly]}
               value={task.assignee}
               readOnly
             />
@@ -350,7 +354,7 @@ const styles = StyleSheet.create({
   },
   readOnly: {
     backgroundColor: "#c0c0c04a",
-    color: "silver",
+    color: "gray",
   },
   placeholderStyle: {
     fontSize: 16,

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import {
   Alert,
-  Button,
   Dimensions,
   Image,
-  SafeAreaView,
+  Modal,
   StyleSheet,
   Text,
   TextInput,
@@ -13,9 +12,12 @@ import {
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import TaskSections from "./src/components/TaskSections";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import DialogBox from "./src/components/DialogBox";
 import Dialog from "react-native-popup-dialog";
+import DatePicker, {
+  getToday,
+  getFormatedDate,
+} from "react-native-modern-datepicker";
 
 export let defaultList = [
   {
@@ -29,7 +31,7 @@ export let defaultList = [
         assignee: "Rookie",
         team: "Avengers",
         priority: "P0",
-        created: new Date("December 17, 2023 00:00:00"),
+        created: new Date("2022-03-25"),
       },
       {
         taskName: "Task 10",
@@ -38,7 +40,7 @@ export let defaultList = [
         assignee: "Rookie",
         team: "Avengers",
         priority: "P0",
-        created: new Date("December 17, 2023 00:00:00"),
+        created: new Date("2021-11-22"),
       },
       {
         taskName: "Task 12",
@@ -47,7 +49,7 @@ export let defaultList = [
         assignee: "Rookie",
         team: "Avengers",
         priority: "P0",
-        created: new Date("December 17, 2023 00:00:00"),
+        created: new Date("2019-03-25"),
       },
       {
         taskName: "Task 31",
@@ -56,7 +58,7 @@ export let defaultList = [
         assignee: "Rookie",
         team: "Avengers",
         priority: "P0",
-        created: new Date("December 17, 2023 00:00:00"),
+        created: new Date("2023-05-17"),
       },
     ],
   },
@@ -71,7 +73,7 @@ export let defaultList = [
         assignee: "Sampreet",
         team: "Progressers",
         priority: "P1",
-        created: new Date("January 10, 2024 00:00:00"),
+        created: new Date("2023-02-10"),
       },
     ],
   },
@@ -86,7 +88,7 @@ export let defaultList = [
         assignee: "Sampreet",
         team: "Completers",
         priority: "P0",
-        created: new Date("Feb 14, 2024 00:00:00"),
+        created: new Date("2022-01-15"),
       },
     ],
   },
@@ -101,7 +103,7 @@ export let defaultList = [
         assignee: "Sampreet",
         team: "Deployers",
         priority: "P2",
-        created: new Date("March 05, 2024 00:00:00"),
+        created: new Date("2023-01-25"),
       },
     ],
   },
@@ -116,7 +118,7 @@ export let defaultList = [
         assignee: "Sampreet",
         team: "Deferrers",
         priority: "P2",
-        created: new Date("Feb 01, 2024 00:00:00"),
+        created: new Date("2023-02-05"),
       },
     ],
   },
@@ -132,6 +134,11 @@ export default function App() {
   const [isPriorityFocus, setIsPriorityFocus] = useState(false);
   const [sortBy, setSortBy] = useState("Priority");
   const [isSortByFocus, setIsSortByFocus] = useState(false);
+  const [fromOpen, setFromOpen] = useState(false);
+  const [toOpen, setToOpen] = useState(false);
+  const [fromDate, setFromDate] = useState("yyyy/mm/dd");
+  const [toDate, setToDate] = useState("yyyy/mm/dd");
+  const today = new Date();
 
   useEffect(() => {
     const filteredList = defaultList.map((status) => {
@@ -180,6 +187,22 @@ export default function App() {
     { value: "3", label: "End Date" },
   ];
 
+  const openFromDate = () => {
+    setFromOpen(true);
+  };
+
+  const openToDate = () => {
+    setToOpen(true);
+  };
+
+  const handleFromChange = (propFromDate) => {
+    setFromDate(propFromDate);
+  };
+
+  const handleToChange = (propToDate) => {
+    setToDate(propToDate);
+  };
+
   const handleDialogOps = (value, task, title) => {
     setCurrentTitle(title);
     setSelectedTask(task);
@@ -217,7 +240,8 @@ export default function App() {
 
   const editTask = (taskToEdit, newPriority, newStatus) => {
     // Delete the task from its current status
-    tasksToDisplay.forEach((status) => {
+    console.log(taskToEdit, newPriority, newStatus);
+    /* tasksToDisplay.forEach((status) => {
       if (status.title === currentTitle) {
         status.tasks = status.tasks.filter(
           (task) => task.taskName !== taskToEdit.taskName
@@ -243,7 +267,7 @@ export default function App() {
     if (newStatusIndex !== -1) {
       tasksToDisplay[newStatusIndex].tasks.push(editedTask);
     }
-    Alert.alert(`${taskToEdit.taskName} has been edited successfully`);
+    Alert.alert(`${taskToEdit.taskName} has been edited successfully`); */
     setShowDialog(false);
   };
 
@@ -303,6 +327,43 @@ export default function App() {
             }}
           />
         </View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "70%",
+            marginBottom: 10,
+          }}
+        >
+          <View
+            style={
+              ({
+                flexDirection: "row",
+                alignItems: "center",
+              },
+              styles.dateElements)
+            }
+          >
+            <TouchableOpacity onPress={openFromDate}>
+              <Text>{fromDate}</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={{ marginHorizontal: 10, fontSize: 18 }}> -- </Text>
+          <View
+            style={
+              ({
+                flexDirection: "row",
+                alignItems: "center",
+              },
+              styles.dateElements)
+            }
+          >
+            <TouchableOpacity onPress={openToDate}>
+              <Text>{toDate}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
         <Text style={styles.filterByText}>Sort By: </Text>
         <Dropdown
           style={[styles.dropdown, isSortByFocus && { borderColor: "blue" }]}
@@ -340,6 +401,31 @@ export default function App() {
             <Text style={styles.addNewTask}>Add new task</Text>
           </View>
         </TouchableOpacity>
+        <Modal animationType="slide" transparent visible={fromOpen}>
+          <View style={styles.dateModal}>
+            <DatePicker
+              mode="calendar"
+              selected={fromDate}
+              onDateChange={handleFromChange}
+            />
+            <TouchableOpacity onPress={() => setFromOpen(false)}>
+              <Text style={{ fontSize: 14 }}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+        <Modal animationType="slide" transparent visible={toOpen}>
+          <View style={styles.dateModal}>
+            <DatePicker
+              mode="calendar"
+              selected={toDate}
+              onDateChange={handleToChange}
+              minimumDate={fromDate}
+            />
+            <TouchableOpacity onPress={() => setToOpen(false)}>
+              <Text style={{ fontSize: 14 }}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </View>
       <Dialog visible={showDialog} width={400} height={800}>
         <DialogBox
@@ -358,6 +444,19 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  dateModal: {
+    marginTop: "50%",
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    shadowColor: "#171717",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 3,
+    width: "90%",
+    padding: 35,
+    alignItems: "center",
+  },
   mainContainer: {
     flex: 1,
     width: Dimensions.get("screen").width,
@@ -390,7 +489,7 @@ const styles = StyleSheet.create({
     borderColor: "white",
     height: "90%",
     padding: 10,
-    paddingBottom: 60,
+    paddingBottom: 130,
   },
   filteringSections: {
     display: "flex",
@@ -424,6 +523,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 3,
   },
+  dateElements: {
+    backgroundColor: "white",
+    padding: 10,
+    paddingHorizontal: 15,
+    borderRadius: 6,
+    fontSize: 16,
+    height: 42,
+    shadowColor: "#171717",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    color: "gray",
+  },
   dropdown: {
     width: "38%",
     height: 42,
@@ -451,49 +563,6 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle: {
     fontSize: 16,
-  },
-  datePickerContainer: {
-    width: "100%",
-    marginTop: 10,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-evenly",
-  },
-  dateButtons: {
-    backgroundColor: "white",
-    borderRadius: 5,
-    height: 38,
-    width: "40%",
-    color: "silver",
-  },
-  inputBoxDates: {
-    backgroundColor: "white",
-    padding: "0.5vw",
-    outline: "none",
-    border: "none",
-    borderRadius: 5,
-    fontSize: "1%",
-    width: "8vw",
-    margin: 0,
-  },
-  dateContainer: {
-    backgroundColor: "white",
-    borderRadius: 5,
-    width: "max-content",
-    fontSize: "1%",
-    display: "flex",
-    alignItems: "center",
-    padding: "1px 10px",
-    marginLeft: "1vw",
-    marginRight: "1vw",
-  },
-  clearIcon: {
-    margin: 0,
-    fontSize: "0.8%",
-    marginLeft: "-0.5vw",
-    marginTop: "1.4%",
-    cursor: "pointer",
   },
   clearFilters: {
     color: "#0052CC",

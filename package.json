@@ -16,6 +16,7 @@
     "react": "18.2.0",
     "react-native": "0.73.6",
     "react-native-element-dropdown": "^2.10.4",
+    "react-native-modern-datepicker": "^1.0.0-beta.91",
     "react-native-popup-dialog": "^0.18.3"
   },
   "devDependencies": {

@@ -4,7 +4,11 @@ import React from "react";
 const TasksSections = ({ tasksList, handleDialogOps }) => {
   return (
     <View style={styles.allTasksCategories}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        nestedScrollEnabled
+      >
         {tasksList.map((each, index) => (
           <View key={index} style={styles.eachTasksSection}>
             <View style={[styles.titleContainer, styles[each.color]]}>
@@ -69,7 +73,7 @@ export default TasksSections;
 const styles = StyleSheet.create({
   allTasksCategories: {
     width: "100%",
-    height: "82%",
+    height: "72%",
     display: "flex",
     flexDirection: "row",
     overflowX: "scroll",
