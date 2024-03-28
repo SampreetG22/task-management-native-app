@@ -1,4 +1,4 @@
-**task-management-native-app**
+## task-management-native-app
 
 # OVERVIEW
 1. The App was developed in an iPhone 13 Pro Max using Expo Go since it is not a development build and can be very useful if there are any future developments.
