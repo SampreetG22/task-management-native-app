@@ -8,4 +8,5 @@
 4. When the app opens, the developed application can be seen.
   
 **DEFAULTS**
+
 To test the app and UI, a default tasks list is hardcoded in the codes since there is no backend involved in this whole application. This list covers all the statuses "Pending", "In Progress", "Completed", "Deployed" and "Deferred". Any new task added or edited will be pushed into this default list. 
